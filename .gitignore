@@ -1,0 +1,4 @@
+.venv
+_state
+indices
+snapshot_cache
