@@ -16,13 +16,11 @@ es.indices.create(index=INDEX,
                               "type": "dense_vector",
                               "dims": 768,
                               "index": True,
-                              "similarity": "l2_norm"
                           },
                           "description": {
                               "type": "dense_vector",
                               "dims": 768,
                               "index": True,
-                              "similarity": "l2_norm"
                           },
                       }
                   })
