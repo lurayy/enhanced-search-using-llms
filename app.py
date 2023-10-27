@@ -1,11 +1,26 @@
 import streamlit as st
-from sentence_transformers import SentenceTransformer
 from elasticsearch import Elasticsearch
+from sentence_transformers import SentenceTransformer
 
+
+elasticsearch_host = "https://stgelastic.bizmandala.com:443"
 index_name = 'book_indexes'
 st.set_page_config(layout="wide")
 model = SentenceTransformer('all-mpnet-base-v2')
-es = Elasticsearch("http://localhost:9200")
+
+es = Elasticsearch(
+    elasticsearch_host
+)
+
+hide_streamlit_style = """
+<style>
+#MainMenu {visibility: hidden;}
+.stDeployButton {visibility: hidden;}
+footer {visibility: hidden;}
+</style>
+"""
+
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 def main():
     st.title("Book Search App")
@@ -21,7 +36,6 @@ def main():
                 else:
                     st.warning("No books found for the given search query.")
 
-
     description_query = st.text_input("Describe the book:")
     if st.button("Using Description"):
         if description_query:
@@ -32,7 +46,6 @@ def main():
                         display_book_info(book)
                 else:
                     st.warning("No books found for the given search query.")
-
 
 def search_books(query, field):
     query_vector = model.encode(query)

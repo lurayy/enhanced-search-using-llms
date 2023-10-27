@@ -1,6 +1,11 @@
 import pickle
 from elasticsearch import Elasticsearch
-es = Elasticsearch("http://localhost:9200")
+
+elasticsearch_host = "https://stgelastic.bizmandala.com:443"
+print(elasticsearch_host)
+es = Elasticsearch(
+    elasticsearch_host
+)
 
 print(es.ping())
 INDEX = "book_indexes"
@@ -16,11 +21,13 @@ es.indices.create(index=INDEX,
                               "type": "dense_vector",
                               "dims": 768,
                               "index": True,
+                              'similarity': 'l2_norm'
                           },
                           "description": {
                               "type": "dense_vector",
                               "dims": 768,
                               "index": True,
+                              'similarity': 'l2_norm'
                           },
                       }
                   })
@@ -31,6 +38,6 @@ with open('book_embeddings.pkl', 'rb') as file:
     loaded_mappings = pickle.load(file)
 
 print('Starting . . .\n\n')
-for index, document in enumerate( loaded_mappings):
+for index, document in enumerate(loaded_mappings):
     print(f'{index} / {len(loaded_mappings)}', end='\r')
     es.index(index=INDEX, document=document, id=document['id'])

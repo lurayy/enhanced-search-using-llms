@@ -2,3 +2,5 @@
 _state
 indices
 snapshot_cache
+.env
+book_em*
