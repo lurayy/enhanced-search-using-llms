@@ -6,11 +6,21 @@ from sentence_transformers import SentenceTransformer
 elasticsearch_host = "https://stgelastic.bizmandala.com:443"
 index_name = 'book_indexes'
 st.set_page_config(layout="wide")
-model = SentenceTransformer('all-mpnet-base-v2')
 
-es = Elasticsearch(
-    elasticsearch_host
-)
+@st.cache_resource
+def load_model():
+    return SentenceTransformer('all-mpnet-base-v2')
+
+@st.cache_resource(ttl=60*5)
+def load_elasticsearch():
+    return Elasticsearch(
+        elasticsearch_host
+    )
+
+
+model = load_model()
+es = load_elasticsearch()
+
 
 hide_streamlit_style = """
 <style>
@@ -55,7 +65,8 @@ def search_books(query, field):
             "query_vector": query_vector,
             "k": 30,
             "num_candidates": 100
-        }
+        },
+        'size': 30
     }
     response = es.search(index=index_name, body=query, fields=['images', 'slug', 'name', 'barcode'])
     return response["hits"]["hits"]
